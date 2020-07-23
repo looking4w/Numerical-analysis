@@ -1,0 +1,24 @@
+# y에 대한 일차도함수에 대한 식을 정의해줍니다.
+def df(t, y):
+    res = 1 + (y / t)
+    return res
+
+# Modified Euler 공식에 따라 계산해줄 함수를 정의합니다.
+def euler(t0, tn, y0, h):
+
+    while t0 < tn:
+        y = y0 + (h/2) * ( df(t0, y0) + df(t0 + h, y0 + ( h * df(t0,y0)) ))
+        print(y)
+        y0 = y
+        t0 = round(t0 + h, 4)
+
+if __name__ == '__main__':
+    t0 = 1
+    tn = 2
+    y0 = 2
+    h = 1 / 40
+    euler(t0, tn, y0, h)
+    h = 1 / 20
+    euler(t0, tn, y0, h)
+    h = 1 / 40
+    euler(t0, tn, y0, h)

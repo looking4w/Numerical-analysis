@@ -1,0 +1,29 @@
+# 이번 문제의 피적분 함수 f(x) 를 정의합니다.
+def f(x):
+    y = (1 - x ** 4) ** (0.25)
+    return y
+
+# node가 3 개일때, Gausssian 가중치들을 적용한 함수를 정의합니다.
+# 여기서 n은 subinterval 의 갯수를, j는 메인함수에서 사용될 시그마(for문)에서의 순서입니다.
+def Gau(n, a, b, j):
+    h = (b - a)/n
+    t = h / 2
+    u = a + (j * h) - t
+    c1 = 0.5555556
+    c2 = 0.8888889
+    c3 = c1
+    x1 = -0.774596669
+    x2 = 0
+    x3 = -x1
+    res = round(c1 * t * f((t * x1) + u), 7) + round(c2 * t * f((t * x2) + u), 7) + round(c3 * t * f((t * x3) + u), 7)
+    return res
+
+if __name__ == '__main__':
+    n = 100
+    a = -1
+    b = 1
+    add = 0
+    for j in range(1, (n + 1)):
+        add = add + Gau(n, a, b, j)
+    Area = round(2 * add, 6)
+    print(f'\nComposite Gaussian quadrature 를 이용한 적분값의 근삿값은 {Area} 입니다.')

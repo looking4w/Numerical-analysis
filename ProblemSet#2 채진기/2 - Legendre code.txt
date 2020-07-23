@@ -1,0 +1,34 @@
+from sympy import *
+
+# Newton Method 를 적용하기 위한 함수를 정의해줍니다.
+def newton(f, Df, x0, epsilon, max_iter):
+    xn = x0
+    for n in range(0, max_iter):
+        fxn = f.subs(x, xn)
+        if abs(fxn) < epsilon:
+            print('Found solution after', n, 'iterations.')
+            return xn
+        Dfxn = Df.subs(x, xn)
+        if Dfxn == 0:
+            print('Zero derivative. no solution found.')
+            return None
+        xn = xn - fxn / Dfxn
+    print('Exceeded maximum iterations. No solution found.')
+    return None
+
+#  30번째 Legendre polynomial 를 구하기 위한 방식으로, 함수를 정의하는 것이 아닌, 배열을 통한 저장방식을 채택했습니다.
+#  배열 자체에 식을 대입해 차곡차곡 저장해줌으로써 python 내에서 연산이 가능했습니다.
+if __name__ == '__main__':
+    x = Symbol('x')
+    arr = [0 for _ in range(31)]
+    arr[0] = 1
+    arr[1] = x
+
+    for i in range(2, 31):
+        arr[i] = ((2 * i - 1) * x * arr[i - 1] / i) - ((i - 1) * arr[i - 2] / i)
+        arr[i] = simplify(arr[i])
+
+    f = arr[30]
+    Df = Derivative(f, x).doit()
+    approx = newton(f, Df, 0.5, 10e-10, 100)
+    print(approx)

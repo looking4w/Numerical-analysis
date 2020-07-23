@@ -1,0 +1,43 @@
+from sympy import *   # 연립방정식을 실행할 수 있는 함수를 받아오는 모듈입니다.
+
+# 3번 문제의 근사해야하는 원함수 1 / (1 + 25*x^(2)) 입니다.
+def f(x):
+    y = 1 / (1 + 25 * x**2)
+    return y
+
+# target(p0부터 p10까지 중 한 점)의 라그랑주 함수를 계산하는 함수입니다.
+def lagrange(p, target):
+    x = Symbol('x')
+    equation = 1
+    # idx(index)를 통해 0 1 2 3 4 5 .. 10번 순서로 p를 받아오고,
+    # idx가 target이 아닐때, 인자를 곱하고 나눕니다.(예를 들면, (x-p0) / (p - p0) 처럼 인자를 11개로 나눴습니다.)
+    for idx in range(len(p)):
+        if idx != target:
+            equation = equation * (x - p[idx])
+
+    for idx in range(len(p)):
+        if idx != target:
+            equation = equation / (p[target] - p[idx])
+
+    return equation
+# lagrange 함수에 원함수값만큼 가중치를 부여한 함수입니다. 이들의 선형결합으로 완전한 Lagrange interpolating polynomial을 완성할 수 있습니다.
+def weighted(lagrange, coefficient):
+    equation = lagrange * coefficient
+    return equation
+
+
+# 위에서 정의해준 함수를 for를 이용한 반복문으로 실행해줍니다.
+# 초기 equation은 0으로 잡아주고, 거기에 weighted 함수를 차곡차곡 더해줍니다.(선형결합 -> 완전한 라그랑주 폴리노미얼 완성)
+if __name__ == '__main__':
+    p = [-1, -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1]
+    equation = 0
+    for idx in range(len(p)):
+        temp = lagrange(p, idx)
+        lag = weighted(temp,f(p[idx]))
+        equation = equation + lag
+
+    x = Symbol('x')
+    for idx in range(51):
+        n = round(-1 + 0.04 * idx, 2)
+        print( equation.subs([(x,n)]) - f(n))
+    # 노드의 정확도를 위해 round함수를 이용했습니다.(반올림)

@@ -1,0 +1,44 @@
+# SOR fomular 에서 첫번째 시그마를 계산할 함수를 정의해줍니다.
+def LOW(i):
+    if i == 0:
+        return 0
+    elif i == 1:
+        res = A[i][0] * x[0]
+        return res
+    else:
+        res = (A[i][0] * x[0]) + (A[i][1] * x[1])
+        return res
+
+# SOR fomular 에서 두번쨰 시그마를 계산할 함수를 정의해줍니다.
+def UP(i):
+    if i == 0:
+        res = (A[i][1] * x[1]) + (A[i][2] * x[2])
+        return res
+    elif i == 1:
+        res = A[i][2] * x[2]
+        return res
+    else:
+        return 0
+
+if __name__ == '__main__':
+    w = 1.13
+    n = 3
+    A = [[5, 3, 0],
+         [3, 5, -1],
+         [0, -1, 5]]
+
+    B = [30, 40, -35]
+    x = [0, 0, 0]
+    prevx = [0, 0, 0]
+    # previous x 배열로 x(k-1)항을 받아 stopping criterion 을 계산할 때 이용합니다.
+    while True:
+        prevx = [i for i in x]
+
+        for i in range(0, n):
+            x[i] = (1 - w) * x[i] + (w / A[i][i]) * (B[i] - LOW(i) - UP(i))
+        res = max([abs(a-b) for a, b in zip(prevx, x)])
+        if res < 10 **(-4):
+            break
+
+    print(f'transposed x = {x} 이고', ', ', f'norm of x(k) - x(k-1) = {res} 입니다.')
+

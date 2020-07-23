@@ -1,0 +1,62 @@
+from sympy import Symbol, solve   # 연립방정식을 실행할 수 있는 함수를 받아오는 모듈입니다.
+
+
+
+# 2번 문제의 근사해야하는 원함수 8x^(3)-12x^(2)-50x+75 입니다.
+def f(x):
+    y = 8 * x ** 3 - 12 * x ** 2 - 50 * x + 75
+    return y
+
+
+# 주어진 점 p0,p1,p2 로 부터 연립방정식 연산 함수를 통해 approximating 포물선의 계수 a,b,c를 결정합니다.
+def approximate(p0, p1, p2):
+    a = Symbol('a')
+    b = Symbol('b')
+    equation1 = a * (p0 - p2) ** 2 + b * (p0 - p2) + f(p2) - f(p0)
+    equation2 = a * (p1 - p2) ** 2 + b * (p1 - p2) + f(p2) - f(p1)
+    res = solve((equation1, equation2), dict=True)
+    return res[0][a], res[0][b], f(p2)
+
+
+# 계수 a,b,c로 구성된 포물선의 두 실근을 구합니다.
+def findroot(a, b, c, point):
+    x = Symbol('x')
+    equation = a * (x - point) ** 2 + b * (x - point) + c
+    res = solve(equation, dict=True)
+    return res[0][x], res[1][x]
+
+
+# 구한 a,b,c 와 새로운 점 newx 로 부터 오차 0.0001 수준으로 함수의 해를 찾습니다.
+def muller(x0, x1, x2):
+    n = 0
+    difference = 0.0001
+
+    print(f'초기 값 {x0}, {x1}, {x2} 로 부터')
+    while n < 999:
+        n = n + 1
+        a, b, c = approximate(x0, x1, x2)
+        root1, root2 = findroot(a, b, c, x2)
+        if abs(x2 - root1) > abs(x2 - root2):
+            newx = root2
+        else:
+            newx = root1
+        x0 = x1
+        x1 = x2
+        x2 = newx
+        if abs(f(newx)) <= difference:
+            print(f'{n}번 반복한 결과 오차 {difference} 의 수준으로 {x2} 에서 해를 갖습니다\n')
+            break
+
+if __name__ == '__main__':
+    x0 = 2
+    x1 = 2.8
+    x2 = 2.4
+    res = muller(x0,x1,x2)
+    x0 = -3
+    x1 = -2.2
+    x2 = -2.6
+    res = muller(x0,x1,x2)
+    x0 = 1
+    x1 = 1.8
+    x2 = 1.4
+    res = muller(x0,x1,x2)

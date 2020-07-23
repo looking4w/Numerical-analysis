@@ -1,0 +1,14 @@
+import math
+
+# yn에 대한 점화식을 반복연산해줄 함수를 정의합니다.
+def y(n):
+    if n == 0:
+        return math.log(6) - math.log(5)
+    return (1 / n) - 5 * y(n-1)
+
+
+if __name__ == '__main__':
+    n = 0
+    while n <= 50:
+        print(y(n), ",  n =",n)
+        n = n + 1

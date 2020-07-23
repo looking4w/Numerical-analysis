@@ -1,0 +1,35 @@
+from sympy import *
+
+# 이번 문제의 피적분 함수 f(x) 를 정의합니다.
+def f(x):
+    y = (cos(x)) ** 2
+    return y
+
+# node가 3 개일때, Gausssian 가중치들을 적용한 함수를 정의합니다.
+# 여기서 n은 subinterval 의 갯수를, j는 메인함수에서 사용될 시그마(for문)에서의 순서입니다.
+def Gau(n, a, b, j):
+    h = (b - a)/n
+    t = h / 2
+    u = a + (j * h) - t
+    c1 = 0.5555556
+    c2 = 0.8888889
+    c3 = c1
+    x1 = -0.774596669
+    x2 = 0
+    x3 = -x1
+    res = c1 * t * f((t * x1) + u) + c2 * t * f((t * x2) + u) + c3 * t * f((t * x3) + u)
+    return res
+
+if __name__ == '__main__':
+    n = 10
+    a = 0
+    b = pi/4
+    add = 0
+    for j in range(1, (n + 1)):
+        add = add + Gau(n, a, b, j)
+    print(f'\nGaussian quadrature 를 이용한 적분값의 근삿값은 {add} 입니다.')
+    newb = round(pi/4, 6)
+    newadd = 0
+    for j in range(1, (n + 1)):
+        newadd = newadd + Gau(n, a, newb, j)
+    print(f'\n위 식에 파이를 소수점 7째자리에서 반올림한 후 계산하면 \n\n{newadd} 입니다.')

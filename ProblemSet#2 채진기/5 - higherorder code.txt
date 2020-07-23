@@ -1,0 +1,23 @@
+from sympy import *
+
+# 이번 문제의 피적분 함수 f(x) 를 정의합니다.
+def f(x):
+    y = (cos(x)) ** 2
+    return y
+
+# higher order quadrature 로써 Simpson's three-eights rule의 n = 4의 경우를 채택했습니다.
+# node 를 3개로 맞춰주기 위해 subinterval, n = 4 일때를 고려했습니다.
+def Simp(n, a, b):
+    h = (b - a)/n
+    res = (2 * h / 45) * (7 * f(a) + 32 * f(a + h) + 12 * f(a + 2 * h) + 32 * f(a + 3 * h) + 7 * f(b))
+    return res
+
+if __name__ == '__main__':
+    a = 0
+    b = pi/4
+    n = 4
+    approx = Simp(n, a, b)
+    print(f'\nSimpsons three-eights method를 이용한 적분값의 근삿값은 {approx} 입니다.')
+    c = round(b, 6)
+    new = Simp(n, a, c)
+    print(f'\n위 식에 파이를 소수점 7째자리에서 반올림한 후 계산하면 \n\n{new} 입니다.')

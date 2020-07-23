@@ -1,0 +1,12 @@
+# yn에 대한 점화식을 반복연산해줄 함수를 정의합니다.(backward recurrence)
+def y(n):
+    if n == 50:
+        return 0
+    return (1/(5 * n)) - (y(n + 1) / 5)
+
+
+if __name__ == '__main__':
+    n = 50
+    while n  > 0 :
+        print(y(n), ",  n =",n)
+        n = n - 1

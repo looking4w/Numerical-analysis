@@ -1,0 +1,37 @@
+from sympy import *
+
+# 이번 문제의 피적분함수를 정의합니다.
+def f(x):
+    y = x * sqrt(1 - x)
+    return y
+
+# 홀수항에 대한 시그마를 계산해줄 함수를 정의합니다.
+def Sigma1(NumberofSubinterval, a, b):
+    A = 0
+    iterationNum = NumberofSubinterval // 2
+    h = abs(b - a)/ NumberofSubinterval
+    for i in range(1, (iterationNum + 1)):
+        A += round(f(a + (2 * i - 1) * h), 4)
+    return A
+
+# 짝수항에 대한 시그마를 계산해줄 함수를 정의합니다.
+def Sigma2(NumberofSubinterval, a, b):
+    A = 0
+    iterationNum = (NumberofSubinterval // 2) - 1
+    h = abs(b - a)/ NumberofSubinterval
+    for i in range(1, (iterationNum + 1)):
+        A += round(f(a + 2 * i * h))
+    return A
+
+# Composite Simpson's rule을 이용해 n개의 subinterval을 가지는 0부터 1까지의 f(x)의 적분값을 계산하는 함수입니다.
+def Simpson(NumberofSubinterval, a, b):
+    h = abs(b - a) / NumberofSubinterval
+    res = (h / 3) * ( round(f(a), 4) + round(f(b), 4) + 2 * round(Sigma2(NumberofSubinterval, a, b), 4) + 4 * round(Sigma1(NumberofSubinterval, a, b), 4) )
+    return res
+
+if __name__ == '__main__':
+    a = 0
+    b = 1
+    n = 6
+    res = round(Simpson(n, a, b), 4)
+    print(f'Composite Simpsons rule을 이용해 {n}개의 subinterval을 가지는 {a}부터 {b}까지의 f(x)의 적분값은{res}입니다.')

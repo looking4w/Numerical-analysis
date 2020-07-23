@@ -1,0 +1,68 @@
+from sympy import *   # 연립방정식을 실행할 수 있는 함수를 받아오는 모듈입니다.
+
+# 3번 문제의 근사해야하는 원함수 1 / (1 + 25*x^(2)) 입니다.
+def f(x):
+    y = 1 / (1 + 25 * x**2)
+    return y
+
+# 첫 구간의 3차 함수 S0의 계수 a, b, c, d를 구하는 함수입니다.
+# S0(x0) = f(x0), S0(x1) = f(x1), S0'(x0) = f'(x0), S0''(x0) = 0 에서 도출했습니다. c는 0임을 알 수 있습니다.
+def setting(f0, f1):
+    b = Symbol('b')
+    d = Symbol('d')
+    equation1 = (0.2 * b) - f1 + f0
+    equation2 = (0.008 * d) - f1 + f0
+    res = solve((equation1, equation2), dict=True)
+    return f(-1), res[0][b], 0, res[0][d]
+
+# a, b, c, d, 그리고 x값의 차이(difference = 0.2)와 다음 x의 함숫값(nf)로 부터 다음 a(an), b(bn), c(cn), d(dn) 값을 계산하는 함수입니다.
+def cubicSpline(a, b, c, d, difference, nf):
+    an = a + (difference * b) + (difference**2 * c) + (difference**3 * d)
+    bn = b + (2 * difference * c) + (3 * difference**2 * d)
+    cn = c + (3 * d * difference)
+    dn = (nf - an - (bn *difference) - (cn * difference**2)) / difference**3
+    return an, bn, cn, dn
+
+# an, bn, cn, dn, 그리고 n번째 x 값으로 부터 3차 함수 Sn을 구하는 함수입니다.
+def Sn(xn, an, bn, cn, dn):
+    x = Symbol('x')
+    res = an + bn * (x - xn) + cn * (x - xn)**2 + dn * (x - xn)**3
+    return res
+
+# a, b, c, d와 an, bn, cn, dn 으로부터 얻은 Sn을 splineSet 배열에 append를 이용해 차곡차곡 저장해줍니다.(끝 자리에 추가됨)
+# 첫 a, b, c, d는 반복문에 형식에 맞지않아서 따로 앞에 계산해서 함수를 배열에 저장 했습니다.
+# 첫 3차 함수를 먼저 만들어주는 과정에서 반복문의 횟수를 len(p)-2로 조정해주었습니다.
+if __name__ == '__main__':
+    p = [-1, -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1]
+    difference = 0.2
+    a, b, c, d = setting(f(p[0]), f(p[1]))
+    res = Sn(p[0], a, b, c, d)
+    splineSet = []
+    splineSet.append(res)
+    for idx in range(len(p) - 2):
+        an, bn, cn, dn = cubicSpline(a, b, c, d, difference, f(p[idx + 1]))
+        res = Sn(p[idx + 1], an, bn, cn, dn)
+        splineSet.append(res)
+        a, b, c, d = an, bn, cn, dn
+
+# 만들어진 10개의 3차함수 Sn에 51개의 점을 대입해야 하기 때문에, 한 그래프에 5개씩 점을 대입하고 마지막은 6개를 대입합니다.
+# curridx를 0부터 5까지 나누고 stack 이 5개 찰때마다 curridx 를 1씩 늘려줍니다.(다음 그래프로 이동해서 값 대입)
+    x = Symbol('x')
+    curridx = 0
+    stack = 0
+    for idx in range(50):
+        n = round(-1 + 0.04 * idx, 2)
+        print(splineSet[curridx].subs([(x, n)]) - f(n))
+        # print(splineSet[curridx].subs([(x, n)]))
+        # print(f(n))
+        # print(splineSet[curridx])
+        stack = stack + 1
+        if stack == 5:
+            curridx = curridx + 1
+            stack = 0
+    print(splineSet[9].subs([(x,p[10])]) - f(p[10]))
+    # print(splineSet[9].subs([(x,p[10])]))
+    # print(f(p[10]))
+    # print(splineSet[9])
+    # 테스트 용도로 사용했던 코드들 입니다.. 
+    # cubic Spline 그래프 테스트, 함숫값 테스트, Spline에 값 대입 테스트..
